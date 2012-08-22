@@ -1,14 +1,6 @@
-libparserutils_v=0.1.1
-libwapcaplet_v=0.1.0
-hubbub_v=0.1.1
-libcss_v=0.1.1
-libnsbmp_v=0.0.3
-libnsgif_v=0.0.3
-
-for p in libparserutils libwapcaplet hubbub libcss libnsbmp libnsgif
+for p in buildsystem libparserutils libwapcaplet libhubbub libcss libnsbmp libnsgif libdom netsurf
 do
-	v=${p}_v
-	svn co svn://svn.netsurf-browser.org/tags/${p}/${!v} ${p}
-	tar Jcf $p-svn.tar.xz ${p}
+	git clone git://source.netsurf-browser.org/${p}.git
+	tar Jcf $p-git.tar.xz --exclude-vcs ${p}
 	rm -fr ${p}
 done

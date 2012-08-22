@@ -1,0 +1,71 @@
+libs=( libparserutils libwapcaplet libhubbub libcss libnsbmp libnsgif libdom )
+
+CATEGORY="Web"
+SUMMARY="Lightweight GTK+ web browser"
+DESCRIPTION="Small as a mouse, fast as a cheetah and available for free.
+NetSurf is a multi-platform web browser for RISC OS, UNIX-like platforms
+(including Linux), Mac OS X, and more."
+HOMEPAGE="http://www.netsurf-browser.org/"
+for l in ${PN} buildsystem ${libs[*]}
+do
+	SRC_URI+=" ${l}-git.tar.xz"
+done
+SRC_DIR=.
+
+REQUIRES="ca-certificates"
+
+src_compile() {
+	export PKG_CONFIG_PATH="${T}/lib/pkgconfig"
+
+	lndirs
+
+	for l in ${libs[*]}
+	do
+		cd ${B}/${l}
+		cygmake NSSHARED=${S}/buildsystem WARNFLAGS="${CFLAGS} -w -U__STRICT_ANSI__ -DWITH_ICONV_FILTER"
+		cygmake install PREFIX=${T} NSSHARED=${S}/buildsystem
+	done
+
+	cd ${B}/${PN}
+	# HARU_PDF: does not compile with 2.2.1
+	cygmake PREFIX=/usr NSSHARED=${S}/buildsystem \
+		WARNFLAGS="${CFLAGS} -w -U__STRICT_ANSI__" \
+		NETSURF_USE_BMP=YES \
+		NETSURF_USE_GIF=YES \
+		NETSURF_USE_JPEG=YES \
+		NETSURF_USE_MNG=YES \
+		NETSURF_USE_PNG=YES \
+		NETSURF_USE_RSVG=YES \
+		NETSURF_USE_WEBP=YES \
+		NETSURF_USE_HARU_PDF=NO \
+		NETSURF_USE_LIBICONV_PLUG=NO \
+		NETSURF_USE_MOZJS=YES \
+		NETSURF_USE_VIDEO=YES
+}
+
+src_install() {
+	export PKG_CONFIG_PATH="${T}/lib/pkgconfig"
+
+	cd ${B}/${PN}
+	cyginstall PREFIX=/usr NSSHARED=${S}/buildsystem \
+		NETSURF_USE_BMP=YES \
+		NETSURF_USE_GIF=YES \
+		NETSURF_USE_JPEG=YES \
+		NETSURF_USE_MNG=YES \
+		NETSURF_USE_PNG=YES \
+		NETSURF_USE_RSVG=YES \
+		NETSURF_USE_WEBP=YES \
+		NETSURF_USE_HARU_PDF=NO \
+		NETSURF_USE_LIBICONV_PLUG=NO \
+		NETSURF_USE_MOZJS=YES \
+		NETSURF_USE_VIDEO=YES
+
+	doicon gtk/res/netsurf.xpm
+	make_desktop_entry netsurf NetSurf netsurf "Network;WebBrowser"
+
+	dodoc COPYING ChangeLog README
+
+	# use system ca-certificates
+	rm -f ${D}/usr/share/${PN}/ca-bundle.txt
+	dosym /usr/ssl/certs/ca-bundle.crt /usr/share/${PN}/ca-bundle.txt
+}

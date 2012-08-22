@@ -1,6 +1,0 @@
-category: Web
-requires: ca-certificates libcairo2 libcurl4 libgdk_pixbuf2.0_0 libglade2.0_0 libglib2.0_0 libgtk2.0_0 libiconv2 libjpeg8 libmng1 libopenssl100 libpango1.0_0 libpng14 librsvg2_2 libwebp2 libxml2 zlib0
-sdesc: "Lightweight web browser (no JavaScript support)"
-ldesc: "Small as a mouse, fast as a cheetah and available for free. 
-NetSurf is a multi-platform web browser for RISC OS, UNIX-like platforms 
-(including Linux), Mac OS X, and more."
